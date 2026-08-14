@@ -17,7 +17,7 @@ plus **Composer** (used for PHPMailer and the test suite — already installed a
    (Apache is already running from setup; if you ever restart your PC, start them from there).
 2. Visit **http://localhost/strideco/**
 
-The database (`strideco`) has already been created and seeded with 4 categories, 13 sample
+The database (`strideco`) has already been created and seeded with 4 categories, 19 sample
 products, a sample `WELCOME10` coupon, and a default shipping zone. If you ever need to re-import
 everything from scratch:
 
@@ -365,7 +365,7 @@ strideco/
 
 ## Notes on the product photos
 
-The 13 sample products ship with real stock photography (sourced from Unsplash, free for
+The 19 sample products ship with real stock photography (sourced from Unsplash, free for
 commercial use) so the store looks finished out of the box. **Caveat**: real product photography
 inevitably shows real brand logos (Nike, Adidas, Puma, Converse, TOMS appear across these photos)
 — fine for a demo/placeholder catalog, but swap in your own photography (or licensed unbranded
