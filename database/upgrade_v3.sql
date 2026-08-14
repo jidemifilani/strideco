@@ -114,3 +114,18 @@ CREATE TABLE IF NOT EXISTS abandoned_carts (
   UNIQUE KEY uniq_email (email),
   UNIQUE KEY uniq_token (token)
 ) ENGINE=InnoDB;
+
+-- Site maintenance mode (Admin → Theme & Content → Site maintenance): shows
+-- a closed splash on every storefront page. See includes/header.php for the
+-- enforcement — the admin panel and Paystack webhook/callback are unaffected.
+INSERT INTO settings (setting_key, setting_value)
+SELECT 'maintenance_mode', '0'
+WHERE NOT EXISTS (SELECT 1 FROM settings WHERE setting_key = 'maintenance_mode');
+
+INSERT INTO settings (setting_key, setting_value)
+SELECT 'maintenance_message', ''
+WHERE NOT EXISTS (SELECT 1 FROM settings WHERE setting_key = 'maintenance_message');
+
+INSERT INTO settings (setting_key, setting_value)
+SELECT 'maintenance_reopen_at', ''
+WHERE NOT EXISTS (SELECT 1 FROM settings WHERE setting_key = 'maintenance_reopen_at');

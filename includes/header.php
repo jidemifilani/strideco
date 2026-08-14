@@ -12,6 +12,67 @@ $siteName = get_setting($pdo, 'site_name', SITE_NAME);
 $accentColor = get_setting($pdo, 'accent_color', '#FF5A1F');
 if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $accentColor)) { $accentColor = '#FF5A1F'; }
 $htmlTitle = isset($pageTitle) && $pageTitle !== '' ? $pageTitle . ' · ' . $siteName : $siteName . ' — Shoes for every stride';
+
+// Site maintenance mode (Admin → Theme & Content): shows a closed splash on
+// every storefront page instead of the normal site. Only pages that include
+// this file are affected — the admin panel has its own header and stays
+// fully reachable, and the Paystack webhook/callback (no header) keep
+// confirming in-flight payments normally even while this is on.
+if (get_setting($pdo, 'maintenance_mode', '0') === '1') {
+    $maintenanceMessage = get_setting($pdo, 'maintenance_message', "We're temporarily closed while we catch up on a large order — thanks for your patience!");
+    $maintenanceReopenAt = get_setting($pdo, 'maintenance_reopen_at', '');
+    $reopenLabel = '';
+    if ($maintenanceReopenAt !== '') {
+        $reopenTimestamp = strtotime($maintenanceReopenAt);
+        if ($reopenTimestamp !== false) {
+            $reopenLabel = date('l, d F Y \a\t H:i', $reopenTimestamp);
+        }
+    }
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($siteName) ?> — We'll be right back</title>
+    <link rel="icon" href="<?= base_url('image.php?icon=1') ?>" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
+    <style>
+      :root {
+        --accent: <?= $accentColor ?>;
+        --accent-dark: <?= hex_shade($accentColor, 0.12) ?>;
+        --accent-tint: <?= hex_tint($accentColor, 0.93) ?>;
+      }
+      body { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; }
+      .maintenance-box { max-width: 480px; }
+      .maintenance-logo { display: inline-flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.3rem; margin-bottom: 28px; color: var(--ink); }
+      .maintenance-logo svg { color: var(--accent); }
+      .maintenance-box h1 { font-size: 1.7rem; margin-bottom: 14px; }
+      .maintenance-box p { color: var(--ink-soft); line-height: 1.6; margin-bottom: 8px; }
+      .maintenance-reopen { display: inline-block; margin-top: 18px; padding: 10px 22px; border-radius: 999px; background: var(--accent-tint); color: var(--accent-dark); font-weight: 600; font-size: 0.92rem; }
+    </style>
+    </head>
+    <body>
+      <div class="maintenance-box">
+        <div class="maintenance-logo">
+          <svg width="30" height="20" viewBox="0 0 48 32" aria-hidden="true" fill="currentColor">
+            <path d="M4 22 C4 22 10 10 20 9 C26 8.4 27 12 32 12 C37 12 38 8 43 8 L44 15 C44 15 40 14 37 16 C34 18 33 22 26 22 Z"/>
+            <path d="M4 22 L44 22 L44 26 C44 26 38 27 30 27 L8 27 C5 27 4 25 4 22 Z" opacity="0.55"/>
+          </svg>
+          <?= htmlspecialchars($siteName) ?>
+        </div>
+        <h1>We'll be right back</h1>
+        <p><?= nl2br(htmlspecialchars($maintenanceMessage)) ?></p>
+        <?php if ($reopenLabel !== ''): ?>
+          <div class="maintenance-reopen">Reopening <?= htmlspecialchars($reopenLabel) ?></div>
+        <?php endif; ?>
+      </div>
+    </body>
+    </html>
+    <?php
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -75,8 +75,8 @@ C:\ProgramData\ComposerSetup\bin\composer.bat install
 - **Abandoned Carts** — see who started checkout but didn't finish
 - Reviews — approve/reject customer submissions
 - Messages — contact form inbox + newsletter subscriber list (with CSV export)
-- Theme & Content — super admins can change the site name, accent color, homepage hero copy, and
-  contact/social details without touching code (see "Theme & content settings" below)
+- Theme & Content — super admins can change the site name, accent color, homepage hero copy,
+  contact/social details, and **site maintenance mode** without touching code (see below)
 - Admin Users — super admins can add/remove other admin accounts (staff or super admin role)
 
 ## Admin panel login
@@ -227,9 +227,27 @@ without a look first. Go to **Admin → Reviews** to approve or reject them.
   labels
 - **Contact & social** — the email/phone/address shown in the footer and Contact page, plus
   Instagram/X/TikTok links (social icons only link out once a URL is filled in)
+- **Site maintenance** — temporarily close the shop to visitors (see below)
 
 Changes save to the `settings` table and take effect immediately on the next page load — no
 restart needed.
+
+## Site maintenance mode
+
+From **Admin → Theme & Content → Site maintenance**, check "Close the shop" to show every visitor
+a "we'll be right back" splash instead of the normal site — useful if you need to pause new orders
+while catching up on a large existing one. You can set a custom message and an optional reopen
+date/time; leave the date blank to just show the message.
+
+What stays unaffected while it's on:
+- **The admin panel** — it has its own header, so you (and any staff admin) can keep working and
+  turn it back off when ready.
+- **Payments already in progress** — the Paystack webhook and redirect callback don't use the
+  storefront header, so a customer who already reached Paystack before you flipped the switch
+  still gets their order confirmed normally.
+
+Everything else that uses the normal site header (home, shop, product pages, cart, checkout,
+accounts, etc.) shows the splash instead until you uncheck the box.
 
 ## Order tracking & automation
 

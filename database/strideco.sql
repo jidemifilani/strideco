@@ -289,7 +289,10 @@ INSERT INTO settings (setting_key, setting_value) VALUES
 ('social_instagram', ''),
 ('social_twitter', ''),
 ('social_tiktok', ''),
-('tax_rate_percent', '0');
+('tax_rate_percent', '0'),
+('maintenance_mode', '0'),
+('maintenance_message', ''),
+('maintenance_reopen_at', '');
 
 INSERT INTO shipping_zones (name, states, fee, is_default, sort_order) VALUES
 ('Standard Delivery', NULL, 2500.00, 1, 0);

@@ -8,6 +8,7 @@ const SETTINGS_FIELDS = [
     'hero_cta_primary_label', 'hero_cta_secondary_label',
     'contact_email', 'contact_phone', 'contact_address',
     'social_instagram', 'social_twitter', 'social_tiktok',
+    'maintenance_mode', 'maintenance_message', 'maintenance_reopen_at',
 ];
 
 $errors = [];
@@ -19,6 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf()) {
     }
     if (trim($_POST['site_name'] ?? '') === '') {
         $errors[] = 'Site name is required.';
+    }
+    $_POST['maintenance_mode'] = !empty($_POST['maintenance_mode']) ? '1' : '0';
+    if ($_POST['maintenance_mode'] === '1' && trim($_POST['maintenance_reopen_at'] ?? '') !== '') {
+        $reopenCheck = strtotime($_POST['maintenance_reopen_at']);
+        if ($reopenCheck === false) {
+            $errors[] = 'Reopen date/time is not valid.';
+        }
     }
 
     if (!$errors) {
@@ -137,6 +145,26 @@ require_once __DIR__ . '/includes/header.php';
       <div class="form-group">
         <label for="social_tiktok">TikTok URL</label>
         <input type="text" id="social_tiktok" name="social_tiktok" value="<?= $val('social_tiktok') ?>" placeholder="https://tiktok.com/@yourshop">
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <div class="admin-card-head"><h3>Site maintenance</h3></div>
+    <div class="admin-card-body">
+      <div class="checkbox-row" style="margin-bottom:20px;">
+        <input type="checkbox" id="maintenance_mode" name="maintenance_mode" value="1" <?= ($settings['maintenance_mode'] ?? '0') === '1' ? 'checked' : '' ?>>
+        <label for="maintenance_mode">Close the shop &mdash; show a "we'll be right back" page to every visitor</label>
+      </div>
+      <p class="form-hint" style="margin:-12px 0 16px;">The admin panel stays fully accessible while this is on, and any payment already in progress at Paystack still completes normally &mdash; only browsing and new checkouts are paused.</p>
+      <div class="form-group">
+        <label for="maintenance_message">Closed message</label>
+        <textarea id="maintenance_message" name="maintenance_message" placeholder="e.g. We're temporarily closed while we catch up on a large order — thanks for your patience!"><?= $val('maintenance_message') ?></textarea>
+      </div>
+      <div class="form-group">
+        <label for="maintenance_reopen_at">Reopens at (optional)</label>
+        <input type="datetime-local" id="maintenance_reopen_at" name="maintenance_reopen_at" value="<?= $val('maintenance_reopen_at') ?>">
+        <p class="form-hint">Shown to visitors as "Reopening [date/time]". Leave blank to just show the message with no date.</p>
       </div>
     </div>
   </div>
