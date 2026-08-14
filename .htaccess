@@ -1,0 +1,15 @@
+ErrorDocument 404 /strideco/404.php
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^robots\.txt$ robots.php [L]
+  RewriteRule ^sitemap\.xml$ sitemap.php [L]
+</IfModule>
+
+<FilesMatch "\.(sql|md)$">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_dir.c>
+  DirectoryIndex index.php
+</IfModule>
