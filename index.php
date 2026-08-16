@@ -2,7 +2,7 @@
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/functions.php';
 
-$pageTitle = 'Shoes for every stride';
+$pageTitle = 'Shoes for every occasion';
 require_once __DIR__ . '/includes/header.php';
 
 $featured = $pdo->query(
@@ -33,7 +33,7 @@ if (!$sliderProducts) {
 $heroEyebrow = get_setting($pdo, 'hero_eyebrow', 'New season drop');
 $heroLine1 = get_setting($pdo, 'hero_headline_line1', 'Every step deserves');
 $heroHighlight = get_setting($pdo, 'hero_headline_highlight', 'the right shoe');
-$heroSubtext = get_setting($pdo, 'hero_subtext', 'StrideCo brings you sneakers, formal, sport and casual shoes built for comfort and made to last — with fast delivery across Nigeria.');
+$heroSubtext = get_setting($pdo, 'hero_subtext', 'Expandable Collection brings you sneakers, formal, sport and casual shoes built for comfort and made to last — with fast delivery across Nigeria.');
 $heroCtaPrimary = get_setting($pdo, 'hero_cta_primary_label', 'Shop Now');
 $heroCtaSecondary = get_setting($pdo, 'hero_cta_secondary_label', 'Browse Sneakers');
 ?>

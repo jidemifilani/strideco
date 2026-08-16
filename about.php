@@ -9,8 +9,8 @@ require_once __DIR__ . '/includes/header.php';
 <section class="hero" style="padding:0;">
   <div class="container" style="padding:72px 24px;text-align:center;">
     <span class="hero-eyebrow">Our story</span>
-    <h1 style="max-width:640px;margin:0 auto 16px;">Built for every stride, since day one.</h1>
-    <p style="color:rgba(255,255,255,0.7);max-width:520px;margin:0 auto;">StrideCo started with a simple idea: great shoes shouldn't mean compromising on comfort, quality, or price.</p>
+    <h1 style="max-width:640px;margin:0 auto 16px;">Built on quality, since day one.</h1>
+    <p style="color:rgba(255,255,255,0.7);max-width:520px;margin:0 auto;">Expandable Collection started with a simple idea: great shoes shouldn't mean compromising on comfort, quality, or price.</p>
   </div>
 </section>
 

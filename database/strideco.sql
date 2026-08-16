@@ -279,12 +279,12 @@ CREATE TABLE shipping_zones (
 -- ---------------------------------------------------------------
 
 INSERT INTO settings (setting_key, setting_value) VALUES
-('site_name', 'StrideCo'),
+('site_name', 'Expandable Collection'),
 ('accent_color', '#FF5A1F'),
 ('hero_eyebrow', 'New season drop'),
 ('hero_headline_line1', 'Every step deserves'),
 ('hero_headline_highlight', 'the right shoe'),
-('hero_subtext', 'StrideCo brings you sneakers, formal, sport and casual shoes built for comfort and made to last — with fast delivery across Nigeria.'),
+('hero_subtext', 'Expandable Collection brings you sneakers, formal, sport and casual shoes built for comfort and made to last — with fast delivery across Nigeria.'),
 ('hero_cta_primary_label', 'Shop Now'),
 ('hero_cta_secondary_label', 'Browse Sneakers'),
 ('contact_email', 'hello@strideco.example'),

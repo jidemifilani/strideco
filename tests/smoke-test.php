@@ -39,7 +39,7 @@ function fetch(string $url): array {
     return [$code, $body, $err];
 }
 
-echo "Running StrideCo smoke tests against {$base}\n\n";
+echo "Running Expandable Collection smoke tests against {$base}\n\n";
 
 foreach ($publicPages as $page) {
     [$code, $body, $err] = fetch("{$base}/{$page}");

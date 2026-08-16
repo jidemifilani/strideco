@@ -1,12 +1,13 @@
 <?php
 $adminCurrentPage = basename($_SERVER['SCRIPT_NAME']);
+$adminSiteName = get_setting($pdo, 'site_name', SITE_NAME);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= htmlspecialchars($pageTitle ?? 'Admin') ?> · StrideCo Admin</title>
+<title><?= htmlspecialchars($pageTitle ?? 'Admin') ?> · <?= htmlspecialchars($adminSiteName) ?> Admin</title>
 <link rel="icon" href="<?= base_url('image.php?icon=1') ?>" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
@@ -20,7 +21,7 @@ $adminCurrentPage = basename($_SERVER['SCRIPT_NAME']);
         <path d="M4 22 C4 22 10 10 20 9 C26 8.4 27 12 32 12 C37 12 38 8 43 8 L44 15 C44 15 40 14 37 16 C34 18 33 22 26 22 Z" fill="currentColor"/>
         <path d="M4 22 L44 22 L44 26 C44 26 38 27 30 27 L8 27 C5 27 4 25 4 22 Z" fill="currentColor" opacity="0.55"/>
       </svg>
-      <span class="logo-text">StrideCo</span>
+      <span class="logo-text"><?= htmlspecialchars($adminSiteName) ?></span>
     </a>
     <nav class="admin-nav">
       <a href="<?= base_url('admin/index.php') ?>" class="<?= $adminCurrentPage === 'index.php' ? 'active' : '' ?>">

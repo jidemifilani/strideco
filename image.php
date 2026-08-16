@@ -47,7 +47,7 @@ SVG;
 }
 
 // ---- Product placeholder photo ------------------------------------
-$name = $_GET['name'] ?? 'StrideCo shoe';
+$name = $_GET['name'] ?? 'Expandable Collection shoe';
 $accent = sanitize_hex($_GET['accent'] ?? '#FF6A1A', '#FF6A1A');
 $seed = max(0, (int) ($_GET['seed'] ?? 0));
 
@@ -80,6 +80,6 @@ echo <<<SVG
       <line x1="110" y1="-28" x2="128" y2="-46" stroke="{$ink}" stroke-width="5" stroke-linecap="round" opacity="0.16"/>
     </g>
   </g>
-  <text x="24" y="378" font-family="'Space Grotesk',sans-serif" font-size="15" font-weight="700" fill="{$ink}" opacity="0.28">StrideCo</text>
+  <text x="24" y="378" font-family="'Space Grotesk',sans-serif" font-size="15" font-weight="700" fill="{$ink}" opacity="0.28">Expandable</text>
 </svg>
 SVG;

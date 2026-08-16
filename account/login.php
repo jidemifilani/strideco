@@ -53,7 +53,7 @@ require_once __DIR__ . '/../includes/header.php';
 <section class="section" style="padding-bottom:96px;">
   <div class="container" style="max-width:420px;">
     <h1 style="margin-bottom:6px;">Log in</h1>
-    <p class="text-muted" style="margin-bottom:28px;">Welcome back to StrideCo.</p>
+    <p class="text-muted" style="margin-bottom:28px;">Welcome back to Expandable Collection.</p>
 
     <form method="post" action="<?= base_url('account/login.php') ?>" class="checkout-card">
       <?= csrf_field() ?>

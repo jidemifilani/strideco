@@ -11,7 +11,7 @@ $wishlistCount = wishlist_count($pdo);
 $siteName = get_setting($pdo, 'site_name', SITE_NAME);
 $accentColor = get_setting($pdo, 'accent_color', '#FF5A1F');
 if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $accentColor)) { $accentColor = '#FF5A1F'; }
-$htmlTitle = isset($pageTitle) && $pageTitle !== '' ? $pageTitle . ' · ' . $siteName : $siteName . ' — Shoes for every stride';
+$htmlTitle = isset($pageTitle) && $pageTitle !== '' ? $pageTitle . ' · ' . $siteName : $siteName . ' — Shoes for every occasion';
 
 // Site maintenance mode (Admin → Theme & Content): shows a closed splash on
 // every storefront page instead of the normal site. Only pages that include
@@ -80,7 +80,7 @@ if (get_setting($pdo, 'maintenance_mode', '0') === '1') {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= htmlspecialchars($htmlTitle) ?></title>
-<meta name="description" content="<?= htmlspecialchars($siteName) ?> — sneakers, formal, sport and casual shoes for every stride.">
+<meta name="description" content="<?= htmlspecialchars($siteName) ?> — sneakers, formal, sport and casual shoes for every occasion.">
 <link rel="icon" href="<?= base_url('image.php?icon=1') ?>" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">

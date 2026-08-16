@@ -1,6 +1,6 @@
 <?php
 // ---------------------------------------------------------------
-// StrideCo site configuration
+// Expandable Collection site configuration
 // ---------------------------------------------------------------
 
 // Database
@@ -10,7 +10,7 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 
 // Site
-define('SITE_NAME', 'StrideCo');
+define('SITE_NAME', 'Expandable Collection');
 define('CURRENCY_SYMBOL', '₦');
 define('SHIPPING_FEE', 2500.00);
 // URL path prefix under the web root (no trailing slash). Change this if you
@@ -31,7 +31,7 @@ define('SMTP_HOST', 'smtp.example.com');
 define('SMTP_PORT', 587);
 define('SMTP_USERNAME', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
 define('SMTP_PASSWORD', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-define('SMTP_FROM_EMAIL', 'orders@strideco.example');
+define('SMTP_FROM_EMAIL', 'orders@expandablecollection.example');
 define('SMTP_FROM_NAME', SITE_NAME);
 
 // Force HTTPS in production. Leave false for local XAMPP development (no SSL

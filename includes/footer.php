@@ -20,7 +20,7 @@ $footerAddress = get_setting($pdo, 'contact_address', 'Lagos, Nigeria');
         </svg>
         <span class="logo-text"><?= htmlspecialchars($footerSiteName) ?></span>
       </a>
-      <p>Sneakers, formal, sport and casual shoes built for every stride. Quality footwear, honest prices.</p>
+      <p>Sneakers, formal, sport and casual shoes for everyday comfort. Quality footwear, honest prices.</p>
       <form action="<?= base_url('newsletter-subscribe.php') ?>" method="post" style="display:flex;gap:8px;max-width:320px;margin-bottom:18px;">
         <?= csrf_field() ?>
         <?= honeypot_field() ?>
@@ -52,7 +52,7 @@ $footerAddress = get_setting($pdo, 'contact_address', 'Lagos, Nigeria');
         <li><a href="<?= base_url('track-order.php') ?>">Track your order</a></li>
         <li><a href="<?= base_url('faq.php') ?>">FAQ</a></li>
         <li><a href="<?= base_url('contact.php') ?>">Contact us</a></li>
-        <li><a href="<?= base_url('about.php') ?>">About StrideCo</a></li>
+        <li><a href="<?= base_url('about.php') ?>">About <?= htmlspecialchars($footerSiteName) ?></a></li>
       </ul>
     </div>
 

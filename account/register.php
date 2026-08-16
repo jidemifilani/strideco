@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['customer_name'] = $old['name'];
         sync_wishlist_to_db($pdo, $customerId);
 
-        set_flash('success', 'Welcome to StrideCo, ' . explode(' ', $old['name'])[0] . '!');
+        set_flash('success', 'Welcome to Expandable Collection, ' . explode(' ', $old['name'])[0] . '!');
         redirect(base_url('account/index.php'));
     }
 }
