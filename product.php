@@ -44,6 +44,14 @@ if ($hasVariants) {
     }
 }
 
+$isPreorder = !empty($product['is_preorder']);
+if ($isPreorder) {
+    // Pre-order bypasses stock gating entirely — every size is selectable
+    // regardless of what's in product_sizes/variant_sizes, since the point
+    // is customers can buy before real stock exists.
+    $sizeStockMap = array_fill_keys(array_keys($sizeStockMap), 1);
+}
+
 $anyInStock = false;
 $totalStock = 0;
 foreach ($sizeStockMap as $stock) {
@@ -128,6 +136,7 @@ require_once __DIR__ . '/includes/header.php';
             </button>
           </form>
         </div>
+        <?php if ($isPreorder): ?><span class="product-badge preorder-badge" style="position:static;display:inline-block;margin-bottom:10px;">Pre-order</span><?php endif; ?>
         <h1><?= htmlspecialchars($product['name']) ?></h1>
         <?php if ($rating['count'] > 0): ?>
           <div class="rating-summary" style="margin-bottom:14px;">
@@ -150,9 +159,15 @@ require_once __DIR__ . '/includes/header.php';
           </ul>
         <?php endif; ?>
 
-        <p id="stockWarning" class="<?= !$anyInStock ? 'form-error' : 'stock-low-note' ?>" style="<?= $anyInStock && $totalStock > 8 ? 'display:none;' : '' ?>margin-bottom:20px;">
-          <?= !$anyInStock ? 'This shoe is currently out of stock in all sizes.' : 'Only ' . $totalStock . ' pair' . ($totalStock === 1 ? '' : 's') . ' left in stock — order soon!' ?>
-        </p>
+        <?php if ($isPreorder): ?>
+          <p id="stockWarning" class="preorder-note" style="margin-bottom:20px;">
+            📦 Available for pre-order<?= $product['preorder_available_at'] ? ' — expected ' . date('d M Y', strtotime($product['preorder_available_at'])) : '' ?>. You'll be charged now and we'll ship as soon as it arrives.
+          </p>
+        <?php else: ?>
+          <p id="stockWarning" class="<?= !$anyInStock ? 'form-error' : 'stock-low-note' ?>" style="<?= $anyInStock && $totalStock > 8 ? 'display:none;' : '' ?>margin-bottom:20px;">
+            <?= !$anyInStock ? 'This shoe is currently out of stock in all sizes.' : 'Only ' . $totalStock . ' pair' . ($totalStock === 1 ? '' : 's') . ' left in stock — order soon!' ?>
+          </p>
+        <?php endif; ?>
 
         <form action="<?= base_url('cart-actions.php') ?>" method="post" id="addToCartForm">
           <?= csrf_field() ?>
@@ -199,7 +214,7 @@ require_once __DIR__ . '/includes/header.php';
               <button type="button" data-step="1" aria-label="Increase quantity">&plus;</button>
             </div>
             <button type="submit" id="addToCartBtn" class="btn btn-primary" <?= $anyInStock ? '' : 'disabled' ?>>
-              Add to Cart
+              <?= $isPreorder ? 'Pre-order Now' : 'Add to Cart' ?>
             </button>
           </div>
         </form>
@@ -226,11 +241,15 @@ require_once __DIR__ . '/includes/header.php';
 </div>
 <script>window.PRODUCT_GALLERY_IMAGES = <?= json_encode(array_values($thumbs)) ?>;</script>
 <?php
-$variantsForJs = array_map(function ($v) use ($product) {
-    return ['id' => (int) $v['id'], 'image' => variant_image_url($v, $product), 'sizes' => $v['sizes']];
+$variantsForJs = array_map(function ($v) use ($product, $isPreorder) {
+    $sizes = $isPreorder ? array_fill_keys(array_keys($v['sizes']), 1) : $v['sizes'];
+    return ['id' => (int) $v['id'], 'image' => variant_image_url($v, $product), 'sizes' => $sizes];
 }, $variants);
 ?>
-<script>window.PRODUCT_VARIANTS = <?= json_encode($variantsForJs) ?>;</script>
+<script>
+  window.PRODUCT_VARIANTS = <?= json_encode($variantsForJs) ?>;
+  window.PRODUCT_IS_PREORDER = <?= $isPreorder ? 'true' : 'false' ?>;
+</script>
 
 <div class="sticky-cart-bar">
   <div>

@@ -106,7 +106,7 @@ require_once __DIR__ . '/includes/header.php';
           <div class="mini-cart-item">
             <img src="<?= $v ? variant_image_url($v, $p) : product_image_url($p) ?>" alt="<?= htmlspecialchars($p['name']) ?>">
             <div>
-              <div class="name"><?= htmlspecialchars($p['name']) ?></div>
+              <div class="name"><?= htmlspecialchars($p['name']) ?><?php if (!empty($p['is_preorder'])): ?> <span class="preorder-tag">Pre-order</span><?php endif; ?></div>
               <div class="meta"><?= $v ? htmlspecialchars($v['color_name']) . ' &middot; ' : '' ?>Size <?= htmlspecialchars($line['size']) ?> &times; <?= (int) $line['qty'] ?></div>
             </div>
             <div class="price"><?= format_price((float) $line['line_total']) ?></div>

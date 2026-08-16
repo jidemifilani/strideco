@@ -372,11 +372,13 @@ document.addEventListener('DOMContentLoaded', function () {
     return document.querySelector('.size-option input:checked');
   }
 
+  var isPreorderProduct = !!window.PRODUCT_IS_PREORDER;
+
   if (sizeInputs.length && addToCartBtn) {
     sizeInputs.forEach(function (input) {
       input.addEventListener('change', function () {
         addToCartBtn.removeAttribute('disabled');
-        if (stickyBtn) { stickyBtn.textContent = 'Add to Cart · Size ' + input.value; }
+        if (stickyBtn) { stickyBtn.textContent = (isPreorderProduct ? 'Pre-order · Size ' : 'Add to Cart · Size ') + input.value; }
       });
     });
   }
@@ -440,9 +442,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (selectedVariantInput) { selectedVariantInput.value = variant.id; }
       if (addToCartBtn) { addToCartBtn.disabled = !anyInStock; }
-      if (stickyBtn) { stickyBtn.textContent = 'Add to Cart'; }
+      if (stickyBtn) { stickyBtn.textContent = isPreorderProduct ? 'Pre-order Now' : 'Add to Cart'; }
 
-      if (stockWarningEl) {
+      // Pre-order sizes are always enabled server-side with a sentinel stock
+      // value (see product.php) — the stock-urgency messaging above doesn't
+      // apply, and the server-rendered pre-order note should stay as-is.
+      if (stockWarningEl && !isPreorderProduct) {
         if (!anyInStock) {
           stockWarningEl.textContent = 'This shoe is currently out of stock in all sizes.';
           stockWarningEl.className = 'form-error';

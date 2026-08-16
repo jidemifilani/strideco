@@ -40,7 +40,7 @@ C:\ProgramData\ComposerSetup\bin\composer.bat install
 **Storefront**
 - Product catalog with category, price-range, and rating filters, plus search
 - Product pages with image galleries, **color variants** (swatches that swap the photo and
-  available sizes), star ratings, stock-urgency messages, and New/Bestseller badges
+  available sizes), star ratings, stock-urgency messages, and New/Bestseller/**Pre-order** badges
 - Quick View modal — preview and add to cart without leaving the grid (products with color
   variants link through to the full page instead, so stock shown is always accurate)
 - Session-based cart and wishlist (wishlist syncs to your account once you log in)
@@ -169,6 +169,28 @@ text field, stock from the base grid) — this is fully backward-compatible and 
 existing products. Once a product **has** variants, the product page shows color swatches;
 selecting one swaps the photo and re-checks which sizes are in stock for that color, without a
 page reload.
+
+Two of the sample products (Air Stride Runner, Urban Flex High-Top) ship with real color variants
+already set up, so you can see the swatch picker working immediately.
+
+## Pre-orders
+
+Check **"This item is available for pre-order"** on any product (**Admin → Products → edit a
+product**) to sell it before real stock exists — set an optional expected availability date
+alongside it. While a product is in pre-order mode:
+- Every size is shown as selectable on the storefront, regardless of what's in the size/stock
+  grid — pre-order is opt-in per product, so this never affects any other product.
+- The product page shows a "Pre-order" badge and a note with the expected date instead of normal
+  stock messaging, and the button reads "Pre-order Now".
+- Checkout works exactly as normal (full payment now, via Paystack or a gift card) — a pre-order
+  isn't a deposit or a waitlist, it's a regular sale for an item that ships later.
+- The order's confirmation email, invoice, and every order-status page carry a "Pre-order" tag and
+  the expected date, and stock is **not** decremented for those line items on payment (there's
+  nothing to decrement yet).
+
+Turn the checkbox off once real stock arrives to go back to normal stock-based selling — nothing
+about past orders changes, since the pre-order status and date are snapshotted onto each order
+line at the moment of purchase.
 
 ## Shipping zones & tax
 

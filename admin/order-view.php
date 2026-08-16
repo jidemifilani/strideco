@@ -33,7 +33,7 @@ require_once __DIR__ . '/includes/header.php';
           <tbody>
             <?php foreach ($items as $item): ?>
               <tr>
-                <td><?= htmlspecialchars($item['product_name']) ?><?php if (!empty($item['variant_color'])): ?> <span class="text-muted">(<?= htmlspecialchars($item['variant_color']) ?>)</span><?php endif; ?></td>
+                <td><?= htmlspecialchars($item['product_name']) ?><?php if (!empty($item['variant_color'])): ?> <span class="text-muted">(<?= htmlspecialchars($item['variant_color']) ?>)</span><?php endif; ?><?php if (!empty($item['is_preorder'])): ?> <span class="preorder-tag">Pre-order</span><?php endif; ?></td>
                 <td><?= htmlspecialchars($item['size']) ?></td>
                 <td><?= (int) $item['quantity'] ?></td>
                 <td><?= format_price((float) $item['price']) ?></td>

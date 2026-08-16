@@ -19,12 +19,13 @@ if (!$product) {
 }
 
 $hasVariants = !empty(get_product_variants($pdo, (int) $product['id']));
+$isPreorder = !empty($product['is_preorder']);
 
 $sizesStmt = $pdo->prepare('SELECT * FROM product_sizes WHERE product_id = ? ORDER BY CAST(size AS UNSIGNED)');
 $sizesStmt->execute([$product['id']]);
 $sizes = $sizesStmt->fetchAll();
 $anyInStock = false;
-foreach ($sizes as $s) { if ($s['stock'] > 0) { $anyInStock = true; break; } }
+foreach ($sizes as $s) { if ($isPreorder || $s['stock'] > 0) { $anyInStock = true; break; } }
 
 $galleryStmt = $pdo->prepare('SELECT * FROM product_images WHERE product_id = ? ORDER BY sort_order, id');
 $galleryStmt->execute([$product['id']]);
@@ -72,7 +73,9 @@ $productUrl = base_url('product.php?slug=' . urlencode($product['slug']));
       <p class="text-muted" style="margin-bottom:16px;">This shoe comes in multiple colors — view full details to pick one and add it to your cart.</p>
       <a href="<?= $productUrl ?>" class="btn btn-primary">View full details</a>
     <?php else: ?>
-      <?php if (!$anyInStock): ?>
+      <?php if ($isPreorder): ?>
+        <p class="preorder-note" style="margin-bottom:16px;">📦 Available for pre-order<?= $product['preorder_available_at'] ? ' — expected ' . date('d M Y', strtotime($product['preorder_available_at'])) : '' ?>.</p>
+      <?php elseif (!$anyInStock): ?>
         <p class="form-error" style="margin-bottom:16px;">Out of stock in all sizes.</p>
       <?php endif; ?>
 
@@ -84,7 +87,7 @@ $productUrl = base_url('product.php?slug=' . urlencode($product['slug']));
 
         <label style="font-size:0.82rem;">Size (UK)</label>
         <div class="size-grid" style="margin-bottom:16px;">
-          <?php foreach ($sizes as $s): $disabled = $s['stock'] <= 0; ?>
+          <?php foreach ($sizes as $s): $disabled = !$isPreorder && $s['stock'] <= 0; ?>
             <div class="size-option <?= $disabled ? 'disabled' : '' ?>" style="transform:scale(0.85);transform-origin:left center;">
               <input type="radio" name="size" id="qv-size-<?= htmlspecialchars($s['size']) ?>" value="<?= htmlspecialchars($s['size']) ?>" <?= $disabled ? 'disabled' : '' ?> required>
               <label for="qv-size-<?= htmlspecialchars($s['size']) ?>"><?= htmlspecialchars($s['size']) ?></label>
@@ -93,7 +96,7 @@ $productUrl = base_url('product.php?slug=' . urlencode($product['slug']));
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <button type="submit" class="btn btn-primary" <?= $anyInStock ? '' : 'disabled' ?>>Add to Cart</button>
+          <button type="submit" class="btn btn-primary" <?= $anyInStock ? '' : 'disabled' ?>><?= $isPreorder ? 'Pre-order Now' : 'Add to Cart' ?></button>
           <a href="<?= $productUrl ?>" class="btn btn-outline">View full details</a>
         </div>
       </form>

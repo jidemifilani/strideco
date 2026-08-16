@@ -74,6 +74,10 @@ function confirm_order_paid(PDO $pdo, array $order, string $paystackReference): 
         'UPDATE variant_sizes SET stock = GREATEST(stock - ?, 0) WHERE variant_id = ? AND size = ?'
     );
     foreach ($itemsStmt->fetchAll() as $item) {
+        if (!empty($item['is_preorder'])) {
+            // No real stock to decrement yet — that's the whole point of a pre-order.
+            continue;
+        }
         if (!empty($item['variant_id'])) {
             $decrementVariantStmt->execute([$item['quantity'], $item['variant_id'], $item['size']]);
         } elseif ($item['product_id']) {

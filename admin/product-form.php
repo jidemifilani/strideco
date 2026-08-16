@@ -11,6 +11,7 @@ $isEdit = $productId > 0;
 $product = [
     'id' => 0, 'name' => '', 'category_id' => $categoriesList[0]['id'] ?? 0, 'price' => '',
     'color' => '', 'description' => '', 'features' => '', 'status' => 'active', 'is_featured' => 0, 'image' => null,
+    'is_preorder' => 0, 'preorder_available_at' => '',
 ];
 $sizeStock = array_fill_keys(SIZE_RANGE, 0);
 
@@ -53,6 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $product['features'] = trim($_POST['features'] ?? '');
     $product['status'] = ($_POST['status'] ?? 'active') === 'inactive' ? 'inactive' : 'active';
     $product['is_featured'] = !empty($_POST['is_featured']) ? 1 : 0;
+    $product['is_preorder'] = !empty($_POST['is_preorder']) ? 1 : 0;
+    $product['preorder_available_at'] = trim($_POST['preorder_available_at'] ?? '');
 
     foreach (SIZE_RANGE as $size) {
         $sizeStock[$size] = max(0, (int) ($_POST['stock'][$size] ?? 0));
@@ -62,6 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!is_numeric($product['price']) || (float) $product['price'] <= 0) { $errors[] = 'Enter a valid price.'; }
     $categoryIds = array_column($categoriesList, 'id');
     if (!in_array($product['category_id'], $categoryIds, true)) { $errors[] = 'Select a valid category.'; }
+    if ($product['preorder_available_at'] !== '' && strtotime($product['preorder_available_at']) === false) {
+        $errors[] = 'Expected availability date is not valid.';
+    }
 
     $uploadedFilename = null;
     if (!empty($_FILES['image']['name']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
@@ -108,19 +114,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $slug = $baseSlug . '-' . $i++;
         }
 
+        $preorderDate = $product['preorder_available_at'] !== '' ? date('Y-m-d', strtotime($product['preorder_available_at'])) : null;
+
         if ($isEdit) {
-            $sql = 'UPDATE products SET category_id=?, name=?, slug=?, description=?, features=?, price=?, color=?, is_featured=?, status=?';
-            $params = [$product['category_id'], $product['name'], $slug, $product['description'], $product['features'], $product['price'], $product['color'], $product['is_featured'], $product['status']];
+            $sql = 'UPDATE products SET category_id=?, name=?, slug=?, description=?, features=?, price=?, color=?, is_featured=?, is_preorder=?, preorder_available_at=?, status=?';
+            $params = [$product['category_id'], $product['name'], $slug, $product['description'], $product['features'], $product['price'], $product['color'], $product['is_featured'], $product['is_preorder'], $preorderDate, $product['status']];
             if ($uploadedFilename) { $sql .= ', image=?'; $params[] = $uploadedFilename; }
             $sql .= ' WHERE id=?';
             $params[] = $productId;
             $pdo->prepare($sql)->execute($params);
         } else {
             $stmt = $pdo->prepare(
-                'INSERT INTO products (category_id, name, slug, description, features, price, color, image, is_featured, status)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+                'INSERT INTO products (category_id, name, slug, description, features, price, color, image, is_featured, is_preorder, preorder_available_at, status)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
             );
-            $stmt->execute([$product['category_id'], $product['name'], $slug, $product['description'], $product['features'], $product['price'], $product['color'], $product['image'], $product['is_featured'], $product['status']]);
+            $stmt->execute([$product['category_id'], $product['name'], $slug, $product['description'], $product['features'], $product['price'], $product['color'], $product['image'], $product['is_featured'], $product['is_preorder'], $preorderDate, $product['status']]);
             $productId = (int) $pdo->lastInsertId();
         }
 
@@ -206,6 +214,19 @@ require_once __DIR__ . '/includes/header.php';
           <label for="is_featured">Show in Featured shoes on homepage</label>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h4>Pre-order</h4>
+    <div class="checkbox-row" style="margin-bottom:14px;">
+      <input type="checkbox" id="is_preorder" name="is_preorder" value="1" <?= $product['is_preorder'] ? 'checked' : '' ?>>
+      <label for="is_preorder">This item is available for pre-order (not in stock yet)</label>
+    </div>
+    <div class="form-group">
+      <label for="preorder_available_at">Expected availability date (optional)</label>
+      <input type="date" id="preorder_available_at" name="preorder_available_at" value="<?= htmlspecialchars((string) $product['preorder_available_at']) ?>">
+      <p class="form-hint">While pre-order is on, every size is shown as selectable regardless of the stock numbers below — customers see a "Pre-order" badge and this date instead of normal stock messaging. Turn it off once real stock arrives to go back to normal.</p>
     </div>
   </div>
 

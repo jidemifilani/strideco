@@ -34,8 +34,11 @@ require_once __DIR__ . '/includes/header.php';
       <?php foreach ($items as $item): ?>
         <div class="mini-cart-item">
           <div>
-            <div class="name"><?= htmlspecialchars($item['product_name']) ?></div>
+            <div class="name"><?= htmlspecialchars($item['product_name']) ?><?php if (!empty($item['is_preorder'])): ?> <span class="preorder-tag">Pre-order</span><?php endif; ?></div>
             <div class="meta"><?= !empty($item['variant_color']) ? htmlspecialchars($item['variant_color']) . ' &middot; ' : '' ?>Size <?= htmlspecialchars($item['size']) ?> &times; <?= (int) $item['quantity'] ?></div>
+            <?php if (!empty($item['is_preorder']) && $item['preorder_available_at']): ?>
+              <div class="text-muted" style="font-size:0.78rem;">Expected <?= date('d M Y', strtotime($item['preorder_available_at'])) ?></div>
+            <?php endif; ?>
           </div>
           <div class="price"><?= format_price((float) $item['price'] * (int) $item['quantity']) ?></div>
         </div>

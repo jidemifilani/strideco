@@ -12,6 +12,16 @@ if (!empty($_GET['restore'])) {
             $snapshot = json_decode($abandoned['cart_snapshot'], true) ?: [];
             $restoredCount = 0;
             foreach ($snapshot as $item) {
+                $productCheck = $pdo->prepare('SELECT is_preorder FROM products WHERE id = ?');
+                $productCheck->execute([$item['product_id']]);
+                $isPreorderItem = (bool) $productCheck->fetchColumn();
+
+                if ($isPreorderItem) {
+                    add_to_cart((int) $item['product_id'], $item['size'], (int) $item['qty'], $item['variant_id'] ? (int) $item['variant_id'] : null);
+                    $restoredCount++;
+                    continue;
+                }
+
                 if (!empty($item['variant_id'])) {
                     $stockStmt = $pdo->prepare('SELECT stock FROM variant_sizes WHERE variant_id = ? AND size = ?');
                     $stockStmt->execute([$item['variant_id'], $item['size']]);
@@ -70,7 +80,7 @@ $cartPageUrl = base_url('cart.php');
                   <div class="cart-item">
                     <img src="<?= $v ? variant_image_url($v, $p) : product_image_url($p) ?>" alt="<?= htmlspecialchars($p['name']) ?>">
                     <div>
-                      <div class="cart-item-name"><a href="<?= base_url('product.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['name']) ?></a></div>
+                      <div class="cart-item-name"><a href="<?= base_url('product.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['name']) ?></a><?php if (!empty($p['is_preorder'])): ?> <span class="preorder-tag">Pre-order</span><?php endif; ?></div>
                       <div class="cart-item-meta"><?= $v ? htmlspecialchars($v['color_name']) . ' &middot; ' : '' ?>Size: <?= htmlspecialchars($line['size']) ?></div>
                     </div>
                   </div>

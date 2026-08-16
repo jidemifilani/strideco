@@ -26,6 +26,8 @@ CREATE TABLE products (
   color VARCHAR(50) DEFAULT NULL,
   image VARCHAR(255) DEFAULT NULL,
   is_featured TINYINT(1) NOT NULL DEFAULT 0,
+  is_preorder TINYINT(1) NOT NULL DEFAULT 0,
+  preorder_available_at DATE DEFAULT NULL,
   status ENUM('active','inactive') NOT NULL DEFAULT 'active',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (category_id) REFERENCES categories(id),
@@ -135,6 +137,8 @@ CREATE TABLE order_items (
   size VARCHAR(10) DEFAULT NULL,
   quantity INT NOT NULL,
   price DECIMAL(10,2) NOT NULL,
+  is_preorder TINYINT(1) NOT NULL DEFAULT 0,
+  preorder_available_at DATE DEFAULT NULL,
   FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;

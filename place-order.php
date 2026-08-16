@@ -78,7 +78,7 @@ try {
     $orderId = (int) $pdo->lastInsertId();
 
     $itemStmt = $pdo->prepare(
-        'INSERT INTO order_items (order_id, product_id, variant_id, variant_color, product_name, size, quantity, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+        'INSERT INTO order_items (order_id, product_id, variant_id, variant_color, product_name, size, quantity, price, is_preorder, preorder_available_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
     );
     foreach ($items as $line) {
         $itemStmt->execute([
@@ -90,6 +90,8 @@ try {
             $line['size'],
             $line['qty'],
             $line['product']['price'],
+            !empty($line['product']['is_preorder']) ? 1 : 0,
+            $line['product']['preorder_available_at'] ?? null,
         ]);
     }
 

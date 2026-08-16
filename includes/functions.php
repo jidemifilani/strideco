@@ -457,7 +457,9 @@ function product_card_html(array $product, array $wishlistIds = []): string {
     $csrf = htmlspecialchars(csrf_token());
 
     $badge = '';
-    if (!empty($product['is_featured'])) {
+    if (!empty($product['is_preorder'])) {
+        $badge = '<span class="product-badge preorder-badge">Pre-order</span>';
+    } elseif (!empty($product['is_featured'])) {
         $badge = '<span class="product-badge">Bestseller</span>';
     } elseif (!empty($product['created_at']) && strtotime($product['created_at']) > strtotime('-14 days')) {
         $badge = '<span class="product-badge">New</span>';
@@ -942,16 +944,24 @@ function send_order_confirmation_email(PDO $pdo, array $order): bool {
     $items = $itemsStmt->fetchAll();
 
     $rows = '';
+    $hasPreorderItems = false;
     foreach ($items as $item) {
         $variantLabel = !empty($item['variant_color']) ? htmlspecialchars($item['variant_color']) . ' / ' : '';
+        $preorderLabel = '';
+        if (!empty($item['is_preorder'])) {
+            $hasPreorderItems = true;
+            $preorderLabel = ' <span style="color:#1A56C4;font-weight:700;font-size:0.75rem;text-transform:uppercase;">[Pre-order'
+                . ($item['preorder_available_at'] ? ' — expected ' . date('d M Y', strtotime($item['preorder_available_at'])) : '') . ']</span>';
+        }
         $rows .= '<tr><td style="padding:6px 0;border-bottom:1px solid #E8E4DE;">'
-            . htmlspecialchars($item['product_name']) . ' (' . $variantLabel . htmlspecialchars($item['size']) . ') &times; ' . (int) $item['quantity']
+            . htmlspecialchars($item['product_name']) . ' (' . $variantLabel . htmlspecialchars($item['size']) . ') &times; ' . (int) $item['quantity'] . $preorderLabel
             . '</td><td style="padding:6px 0;border-bottom:1px solid #E8E4DE;text-align:right;">' . format_price((float) $item['price'] * (int) $item['quantity']) . '</td></tr>';
     }
 
     $body = '<p>Hi ' . htmlspecialchars($order['customer_name']) . ',</p>'
         . '<p>Thanks for your order! We\'ve received your payment and we\'re getting it ready.</p>'
         . '<p><strong>Order reference:</strong> ' . htmlspecialchars($order['order_ref']) . '</p>'
+        . ($hasPreorderItems ? '<p style="background:#E6F0FF;color:#1A56C4;padding:10px 14px;border-radius:8px;font-size:0.9rem;">📦 This order includes one or more pre-order items — those will ship once they become available, separately if needed.</p>' : '')
         . '<table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:0.92rem;">' . $rows . '</table>'
         . '<p style="text-align:right;font-weight:700;">Total: ' . format_price((float) $order['total']) . '</p>'
         . '<p><a href="' . full_base_url('track-order.php?ref=' . urlencode($order['order_ref']) . '&email=' . urlencode($order['email'])) . '" style="color:' . htmlspecialchars(get_setting($pdo, 'accent_color', '#FF5A1F')) . ';">Track your order</a></p>';

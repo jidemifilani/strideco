@@ -51,11 +51,15 @@ function api_absolute_url(string $siteRelativePath): string {
 
 /**
  * True if any size (of any color variant, or the base sizes if the product
- * has no variants) has stock — mirrors the same "variants override base
- * stock" rule product.php uses, so the API and the storefront never
+ * has no variants) has stock, OR the product is in pre-order mode (which
+ * bypasses stock entirely by design — see database/upgrade_v4.sql). Mirrors
+ * the same rules product.php uses, so the API and the storefront never
  * disagree on whether something is buyable.
  */
-function api_product_in_stock(PDO $pdo, int $productId): bool {
+function api_product_in_stock(PDO $pdo, int $productId, bool $isPreorder): bool {
+    if ($isPreorder) {
+        return true;
+    }
     $variants = get_product_variants($pdo, $productId);
     if ($variants) {
         foreach ($variants as $variant) {
@@ -71,6 +75,7 @@ function api_product_in_stock(PDO $pdo, int $productId): bool {
 function api_product_summary(array $product): array {
     global $pdo;
     $rating = get_rating_summary($pdo, (int) $product['id']);
+    $isPreorder = !empty($product['is_preorder']);
 
     return [
         'id' => (int) $product['id'],
@@ -84,8 +89,10 @@ function api_product_summary(array $product): array {
         ],
         'image_url' => api_absolute_url(product_image_url($product)),
         'rating' => ['average' => $rating['avg'], 'count' => $rating['count']],
-        'in_stock' => api_product_in_stock($pdo, (int) $product['id']),
+        'in_stock' => api_product_in_stock($pdo, (int) $product['id'], $isPreorder),
         'is_featured' => (bool) $product['is_featured'],
+        'is_preorder' => $isPreorder,
+        'preorder_available_at' => $product['preorder_available_at'] ?? null,
         'url' => api_absolute_url(base_url('product.php?slug=' . urlencode($product['slug']))),
     ];
 }

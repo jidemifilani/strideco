@@ -35,16 +35,24 @@ if ($action === 'add') {
         }
     }
 
-    if ($variantId) {
+    // Pre-order products skip all stock gating — there's no real inventory
+    // to check yet by design (see includes/header.php... no, see
+    // database/upgrade_v4.sql for the reasoning).
+    $isPreorderProduct = $product && !empty($product['is_preorder']);
+
+    if ($isPreorderProduct) {
+        $sizeRow = ['stock' => PHP_INT_MAX];
+    } elseif ($variantId) {
         $sizeStmt = $pdo->prepare('SELECT stock FROM variant_sizes WHERE variant_id = ? AND size = ?');
         $sizeStmt->execute([$variantId, $size]);
+        $sizeRow = $sizeStmt->fetch();
     } else {
         $sizeStmt = $pdo->prepare('SELECT stock FROM product_sizes WHERE product_id = ? AND size = ?');
         $sizeStmt->execute([$productId, $size]);
+        $sizeRow = $sizeStmt->fetch();
     }
-    $sizeRow = $sizeStmt->fetch();
 
-    if (!$product || !$sizeRow) {
+    if (!$product || !$sizeRow || $size === '') {
         set_flash('error', 'That item could not be added to your cart.');
     } elseif ($sizeRow['stock'] <= 0) {
         set_flash('error', 'That size is out of stock.');
@@ -61,8 +69,10 @@ if ($action === 'add') {
         } else {
             $toAdd = min($qty, $allowed);
             add_to_cart($productId, $size, $toAdd, $variantId);
-            if ($toAdd < $qty) {
+            if (!$isPreorderProduct && $toAdd < $qty) {
                 set_flash('success', "Only {$toAdd} in stock — added what's available to your cart.");
+            } elseif ($isPreorderProduct) {
+                set_flash('success', htmlspecialchars($product['name']) . ' added to your cart as a pre-order.');
             } else {
                 set_flash('success', htmlspecialchars($product['name']) . ' added to your cart.');
             }
@@ -74,15 +84,21 @@ if ($action === 'add') {
 
     $raw = get_cart_raw();
     if (isset($raw[$key]) && $qty > 0) {
-        if (!empty($raw[$key]['variant_id'])) {
-            $sizeStmt = $pdo->prepare('SELECT stock FROM variant_sizes WHERE variant_id = ? AND size = ?');
-            $sizeStmt->execute([$raw[$key]['variant_id'], $raw[$key]['size']]);
-        } else {
-            $sizeStmt = $pdo->prepare('SELECT stock FROM product_sizes WHERE product_id = ? AND size = ?');
-            $sizeStmt->execute([$raw[$key]['product_id'], $raw[$key]['size']]);
+        $productCheck = $pdo->prepare('SELECT is_preorder FROM products WHERE id = ?');
+        $productCheck->execute([$raw[$key]['product_id']]);
+        $isPreorderItem = (bool) $productCheck->fetchColumn();
+
+        if (!$isPreorderItem) {
+            if (!empty($raw[$key]['variant_id'])) {
+                $sizeStmt = $pdo->prepare('SELECT stock FROM variant_sizes WHERE variant_id = ? AND size = ?');
+                $sizeStmt->execute([$raw[$key]['variant_id'], $raw[$key]['size']]);
+            } else {
+                $sizeStmt = $pdo->prepare('SELECT stock FROM product_sizes WHERE product_id = ? AND size = ?');
+                $sizeStmt->execute([$raw[$key]['product_id'], $raw[$key]['size']]);
+            }
+            $stock = (int) ($sizeStmt->fetchColumn() ?: 0);
+            $qty = min($qty, max(1, $stock));
         }
-        $stock = (int) ($sizeStmt->fetchColumn() ?: 0);
-        $qty = min($qty, max(1, $stock));
     }
     update_cart_item($key, $qty);
 } elseif ($action === 'remove') {

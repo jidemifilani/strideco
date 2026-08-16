@@ -96,7 +96,7 @@ $invAddress = get_setting($pdo, 'contact_address', 'Lagos, Nigeria');
     <tbody>
       <?php foreach ($items as $item): ?>
         <tr>
-          <td><?= htmlspecialchars($item['product_name']) ?><?php if (!empty($item['variant_color'])): ?> <span style="color:#837C74;">(<?= htmlspecialchars($item['variant_color']) ?>)</span><?php endif; ?></td>
+          <td><?= htmlspecialchars($item['product_name']) ?><?php if (!empty($item['variant_color'])): ?> <span style="color:#837C74;">(<?= htmlspecialchars($item['variant_color']) ?>)</span><?php endif; ?><?php if (!empty($item['is_preorder'])): ?> <span style="color:#1A56C4;font-weight:700;font-size:0.7rem;text-transform:uppercase;">[Pre-order<?= $item['preorder_available_at'] ? ' — ' . date('d M Y', strtotime($item['preorder_available_at'])) : '' ?>]</span><?php endif; ?></td>
           <td><?= htmlspecialchars($item['size']) ?></td>
           <td><?= (int) $item['quantity'] ?></td>
           <td><?= format_price((float) $item['price']) ?></td>
