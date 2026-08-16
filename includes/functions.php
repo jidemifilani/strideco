@@ -8,7 +8,22 @@ function start_session_if_needed(): void {
 }
 
 function base_url(string $path = ''): string {
-    return BASE_URL . '/' . ltrim($path, '/');
+    $path = ltrim($path, '/');
+    $query = null;
+    if (($qPos = strpos($path, '?')) !== false) {
+        $query = substr($path, $qPos + 1);
+        $path = substr($path, 0, $qPos);
+    }
+    if (substr($path, -4) === '.php') {
+        $path = substr($path, 0, -4);
+    }
+    $path = preg_replace('#(^|/)index$#', '', $path);
+
+    $url = BASE_URL . '/' . $path;
+    if ($query !== null && $query !== '') {
+        $url .= '?' . $query;
+    }
+    return $url;
 }
 
 function full_base_url(string $path = ''): string {

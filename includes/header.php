@@ -5,6 +5,12 @@ start_session_if_needed();
 
 $categories = $pdo->query('SELECT * FROM categories ORDER BY name')->fetchAll();
 $currentPath = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+if (substr($currentPath, -4) === '.php') {
+    $currentPath = substr($currentPath, 0, -4);
+}
+if ($currentPath === 'index') {
+    $currentPath = '';
+}
 $activeCategorySlug = $_GET['category'] ?? '';
 $cartCount = cart_count();
 $wishlistCount = wishlist_count($pdo);
@@ -110,9 +116,9 @@ if (get_setting($pdo, 'maintenance_mode', '0') === '1') {
     </a>
 
     <nav class="main-nav" id="mainNav">
-      <a href="<?= base_url('index.php') ?>" class="<?= $currentPath === 'index.php' ? 'active' : '' ?>">Home</a>
+      <a href="<?= base_url('index.php') ?>" class="<?= $currentPath === '' ? 'active' : '' ?>">Home</a>
       <div class="nav-dropdown">
-        <a href="<?= base_url('shop.php') ?>" class="<?= $currentPath === 'shop.php' && $activeCategorySlug === '' ? 'active' : '' ?>">
+        <a href="<?= base_url('shop.php') ?>" class="<?= $currentPath === 'shop' && $activeCategorySlug === '' ? 'active' : '' ?>">
           Shop <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
         </a>
         <div class="dropdown-panel">

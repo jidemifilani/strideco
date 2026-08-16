@@ -4,6 +4,16 @@ ErrorDocument 404 /strideco/404.php
   RewriteEngine On
   RewriteRule ^robots\.txt$ robots.php [L]
   RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
+  # Friendly alias: /home shows the same homepage as /
+  RewriteRule ^home/?$ index.php [L]
+
+  # Clean URLs: serve <path>.php for requests to <path> (no extension),
+  # so links work without ".php" showing in the address bar.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}\.php -f
+  RewriteRule ^(.*)$ $1.php [L]
 </IfModule>
 
 <FilesMatch "\.(sql|md)$">
