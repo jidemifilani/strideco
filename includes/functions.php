@@ -272,7 +272,7 @@ function hex_shade(string $hex, float $amountToBlack): string {
 }
 
 function format_price(float $amount): string {
-    return CURRENCY_SYMBOL . number_format($amount, 2);
+    return STORE_CURRENCY_SYMBOL . number_format($amount, 2);
 }
 
 const FREE_SHIPPING_THRESHOLD = 50000.0;

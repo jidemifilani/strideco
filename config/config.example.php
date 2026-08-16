@@ -11,7 +11,7 @@ define('DB_PASS', '');
 
 // Site
 define('SITE_NAME', 'Expandable Collection');
-define('CURRENCY_SYMBOL', '₦');
+define('STORE_CURRENCY_SYMBOL', '₦');
 define('SHIPPING_FEE', 2500.00);
 // URL path prefix under the web root (no trailing slash). Change this if you
 // rename the project folder inside htdocs.
