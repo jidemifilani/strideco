@@ -56,10 +56,11 @@ require_once __DIR__ . '/includes/header.php';
   <div class="admin-card-head"><h3><?= count($categoriesList) ?> categories</h3></div>
   <div class="admin-table-wrap">
     <table class="admin-table">
-      <thead><tr><th>Color</th><th>Name</th><th>Slug</th><th>Products</th><th></th></tr></thead>
+      <thead><tr><th>Image</th><th>Color</th><th>Name</th><th>Slug</th><th>Products</th><th></th></tr></thead>
       <tbody>
         <?php foreach ($categoriesList as $cat): ?>
           <tr>
+            <td><img src="<?= htmlspecialchars(category_image_url($cat)) ?>" alt="" style="width:46px;height:36px;object-fit:cover;border-radius:6px;"></td>
             <td><span style="display:inline-block;width:22px;height:22px;border-radius:6px;background:<?= htmlspecialchars($cat['accent_color']) ?>;"></span></td>
             <td><?= htmlspecialchars($cat['name']) ?></td>
             <td class="text-muted"><?= htmlspecialchars($cat['slug']) ?></td>

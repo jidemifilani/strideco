@@ -21,13 +21,48 @@ foreach ($pdo->query("SELECT category_id, COUNT(*) AS c FROM products WHERE stat
 
 $wishlistIds = get_wishlist_ids($pdo);
 
-$sliderProducts = array_slice($featured, 0, 5);
-if (!$sliderProducts) {
-    $sliderProducts = $pdo->query(
-        "SELECT p.*, c.name AS category_name, c.accent_color
-         FROM products p JOIN categories c ON p.category_id = c.id
-         WHERE p.status = 'active' ORDER BY p.created_at DESC LIMIT 5"
-    )->fetchAll();
+// Custom admin-managed slides take priority; fall back to Featured products
+// (and if there are none of those either, the newest products) so the
+// slider is never empty out of the box.
+$customSlides = $pdo->query("SELECT * FROM hero_slides WHERE status = 'active' ORDER BY sort_order ASC, id ASC")->fetchAll();
+
+if ($customSlides) {
+    $slides = array_map(function ($s) {
+        $link = trim((string) $s['link_url']);
+        return [
+            'image' => base_url('assets/uploads/' . $s['image']),
+            'link' => $link === '' ? null : (preg_match('#^https?://#i', $link) ? $link : base_url(ltrim($link, '/'))),
+            'badge' => null,
+            'title' => $s['headline'],
+            'subtitle' => $s['subtext'],
+            'price' => null,
+        ];
+    }, $customSlides);
+} else {
+    $sliderProducts = array_slice($featured, 0, 5);
+    if (!$sliderProducts) {
+        $sliderProducts = $pdo->query(
+            "SELECT p.*, c.name AS category_name, c.accent_color
+             FROM products p JOIN categories c ON p.category_id = c.id
+             WHERE p.status = 'active' ORDER BY p.created_at DESC LIMIT 5"
+        )->fetchAll();
+    }
+    $slides = array_map(function ($sp) {
+        $badge = null;
+        if (!empty($sp['is_featured'])) {
+            $badge = 'Bestseller';
+        } elseif (!empty($sp['created_at']) && strtotime($sp['created_at']) > strtotime('-14 days')) {
+            $badge = 'New Arrival';
+        }
+        return [
+            'image' => product_image_url($sp),
+            'link' => base_url('product.php?slug=' . urlencode($sp['slug'])),
+            'badge' => $badge,
+            'title' => $sp['name'],
+            'subtitle' => null,
+            'price' => format_price((float) $sp['price']),
+        ];
+    }, $sliderProducts);
 }
 
 $heroEyebrow = get_setting($pdo, 'hero_eyebrow', 'New season drop');
@@ -39,29 +74,26 @@ $heroCtaSecondary = get_setting($pdo, 'hero_cta_secondary_label', 'Browse Sneake
 ?>
 
 <section class="hero hero-fullwidth" id="heroSlider">
-  <?php if ($sliderProducts): ?>
+  <?php if ($slides): ?>
     <div class="hero-slider-track">
-      <?php foreach ($sliderProducts as $i => $sp):
-        $productUrl = base_url('product.php?slug=' . urlencode($sp['slug']));
-        $heroBadge = null;
-        if (!empty($sp['is_featured'])) {
-            $heroBadge = 'Bestseller';
-        } elseif (!empty($sp['created_at']) && strtotime($sp['created_at']) > strtotime('-14 days')) {
-            $heroBadge = 'New Arrival';
-        }
-      ?>
+      <?php foreach ($slides as $i => $slide): $cardTag = $slide['link'] ? 'a' : 'div'; ?>
         <div class="hero-slide <?= $i === 0 ? 'active' : '' ?>">
-          <img src="<?= product_image_url($sp) ?>" alt="<?= htmlspecialchars($sp['name']) ?>" class="hero-slide-bg">
-          <a href="<?= $productUrl ?>" class="hero-product-card">
-            <div>
-              <?php if ($heroBadge): ?><span class="hero-product-badge"><?= htmlspecialchars($heroBadge) ?></span><?php endif; ?>
-              <h3><?= htmlspecialchars($sp['name']) ?></h3>
-              <span class="hero-product-price"><?= format_price((float) $sp['price']) ?></span>
-            </div>
-            <span class="hero-product-cta" aria-hidden="true">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-          </a>
+          <img src="<?= htmlspecialchars($slide['image']) ?>" alt="<?= htmlspecialchars($slide['title'] ?? '') ?>" class="hero-slide-bg">
+          <?php if ($slide['title'] || $slide['price']): ?>
+            <<?= $cardTag ?> <?= $slide['link'] ? 'href="' . htmlspecialchars($slide['link']) . '"' : '' ?> class="hero-product-card">
+              <div>
+                <?php if ($slide['badge']): ?><span class="hero-product-badge"><?= htmlspecialchars($slide['badge']) ?></span><?php endif; ?>
+                <?php if ($slide['title']): ?><h3><?= htmlspecialchars($slide['title']) ?></h3><?php endif; ?>
+                <?php if ($slide['subtitle']): ?><p class="hero-product-subtitle"><?= htmlspecialchars($slide['subtitle']) ?></p><?php endif; ?>
+                <?php if ($slide['price']): ?><span class="hero-product-price"><?= $slide['price'] ?></span><?php endif; ?>
+              </div>
+              <?php if ($slide['link']): ?>
+                <span class="hero-product-cta" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              <?php endif; ?>
+            </<?= $cardTag ?>>
+          <?php endif; ?>
         </div>
       <?php endforeach; ?>
     </div>
@@ -85,11 +117,11 @@ $heroCtaSecondary = get_setting($pdo, 'hero_cta_secondary_label', 'Browse Sneake
     </div>
   </div>
 
-  <?php if (count($sliderProducts) > 1): ?>
+  <?php if (count($slides) > 1): ?>
     <button type="button" class="hero-slider-nav hero-slider-prev" id="heroSliderPrev" aria-label="Previous">&lsaquo;</button>
     <button type="button" class="hero-slider-nav hero-slider-next" id="heroSliderNext" aria-label="Next">&rsaquo;</button>
     <div class="hero-slider-dots">
-      <?php foreach ($sliderProducts as $i => $sp): ?>
+      <?php foreach ($slides as $i => $slide): ?>
         <button type="button" class="hero-dot <?= $i === 0 ? 'active' : '' ?>" data-index="<?= $i ?>" aria-label="Show slide <?= $i + 1 ?>"></button>
       <?php endforeach; ?>
     </div>

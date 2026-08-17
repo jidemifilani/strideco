@@ -418,6 +418,18 @@ function product_image_url(array $product): string {
     return base_url('image.php?' . $params);
 }
 
+function category_image_url(array $category): string {
+    if (!empty($category['image']) && file_exists(__DIR__ . '/../assets/uploads/' . $category['image'])) {
+        return base_url('assets/uploads/' . $category['image']);
+    }
+    $params = http_build_query([
+        'name' => $category['name'],
+        'accent' => $category['accent_color'] ?? '#FF6A1A',
+        'seed' => $category['id'] ?? 0,
+    ]);
+    return base_url('image.php?' . $params);
+}
+
 /**
  * Returns a product's color variants (empty array if it has none — see the
  * product_variants table comment in database/upgrade_v3.sql for the

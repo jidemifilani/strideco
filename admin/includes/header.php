@@ -40,6 +40,10 @@ $adminSiteName = get_setting($pdo, 'site_name', SITE_NAME);
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="13" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="13" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.6"/></svg>
         Categories
       </a>
+      <a href="<?= base_url('admin/hero-slides.php') ?>" class="<?= in_array($adminCurrentPage, ['hero-slides.php','hero-slide-form.php']) ? 'active' : '' ?>">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="5" width="19" height="13" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 15l5-4.5 4 3 4-5 5.5 4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        Homepage Slider
+      </a>
       <a href="<?= base_url('admin/reviews.php') ?>" class="<?= $adminCurrentPage === 'reviews.php' ? 'active' : '' ?>">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 2.5l2.6 5.6 6 .7-4.5 4.1 1.2 6-5.3-3-5.3 3 1.2-6-4.5-4.1 6-.7L12 2.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
         Reviews

@@ -93,6 +93,20 @@ require_once __DIR__ . '/includes/header.php';
   <div class="container">
     <div class="breadcrumb"><a href="<?= base_url('index.php') ?>">Home</a> / <?= htmlspecialchars($pageTitle) ?></div>
 
+    <?php if (!$activeCategory && $search === ''): ?>
+      <div class="category-tiles">
+        <?php foreach ($categories as $cat): ?>
+          <a href="<?= shop_filter_url($baseParams, ['category' => $cat['slug']]) ?>" class="category-tile" style="--accent:<?= htmlspecialchars($cat['accent_color']) ?>;">
+            <img src="<?= htmlspecialchars(category_image_url($cat)) ?>" alt="<?= htmlspecialchars($cat['name']) ?>">
+            <div class="category-tile-label">
+              <span><?= htmlspecialchars($cat['name']) ?></span>
+              <span class="category-tile-count"><?= (int) ($counts[$cat['id']] ?? 0) ?> shoe<?= ($counts[$cat['id']] ?? 0) === 1 ? '' : 's' ?></span>
+            </div>
+          </a>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+
     <div class="shop-layout">
       <aside class="filter-box">
         <h4>Categories</h4>
@@ -101,7 +115,8 @@ require_once __DIR__ . '/includes/header.php';
             <span>All shoes</span><span><?= (int) $totalCount ?></span>
           </a>
           <?php foreach ($categories as $cat): ?>
-            <a href="<?= shop_filter_url($baseParams, ['category' => $cat['slug']]) ?>" class="<?= $activeCategory && $activeCategory['slug'] === $cat['slug'] ? 'active' : '' ?>">
+            <a href="<?= shop_filter_url($baseParams, ['category' => $cat['slug']]) ?>" class="filter-list-cat <?= $activeCategory && $activeCategory['slug'] === $cat['slug'] ? 'active' : '' ?>">
+              <img src="<?= htmlspecialchars(category_image_url($cat)) ?>" alt="" class="filter-list-cat-img">
               <span><?= htmlspecialchars($cat['name']) ?></span><span><?= (int) ($counts[$cat['id']] ?? 0) ?></span>
             </a>
           <?php endforeach; ?>
