@@ -221,8 +221,32 @@ require_once __DIR__ . '/includes/header.php';
 
         <div class="pd-meta">
           <span>Free shipping on orders over <?= format_price(FREE_SHIPPING_THRESHOLD) ?></span>
-          <span>Secure checkout powered by Paystack</span>
+          <span>Secure and safe payment powered by Paystack</span>
+          <span>5-day return policy on unworn items</span>
           <span>Easy exchanges within 7 days of delivery</span>
+        </div>
+
+        <?php
+          $shareUrl = full_base_url('product.php?slug=' . urlencode($product['slug']));
+          $shareText = $product['name'] . ' on ' . get_setting($pdo, 'site_name', SITE_NAME);
+          $shareImage = full_base_url('assets/uploads/' . $product['image']);
+        ?>
+        <div class="pd-share">
+          <span class="pd-share-label">Share this shoe</span>
+          <div class="pd-share-row">
+            <button type="button" class="share-btn share-btn-native" id="nativeShareBtn" data-url="<?= htmlspecialchars($shareUrl) ?>" data-title="<?= htmlspecialchars($shareText) ?>" aria-label="Share" title="Share (TikTok, Instagram, and more via your device)">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 3v12M12 3l-4 4M12 3l4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <a class="share-btn share-btn-brand" style="--brand:#25D366;" href="https://wa.me/?text=<?= urlencode($shareText . ' ' . $shareUrl) ?>" target="_blank" rel="noopener" aria-label="Share on WhatsApp">WA</a>
+            <a class="share-btn share-btn-brand" style="--brand:#1877F2;" href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($shareUrl) ?>" target="_blank" rel="noopener" aria-label="Share on Facebook">FB</a>
+            <a class="share-btn share-btn-brand" style="--brand:#111827;" href="https://twitter.com/intent/tweet?url=<?= urlencode($shareUrl) ?>&text=<?= urlencode($shareText) ?>" target="_blank" rel="noopener" aria-label="Share on X">X</a>
+            <a class="share-btn share-btn-brand" style="--brand:#E60023;" href="https://pinterest.com/pin/create/button/?url=<?= urlencode($shareUrl) ?>&media=<?= urlencode($shareImage) ?>&description=<?= urlencode($shareText) ?>" target="_blank" rel="noopener" aria-label="Share on Pinterest">P</a>
+            <a class="share-btn share-btn-brand" style="--brand:#26A5E4;" href="https://t.me/share/url?url=<?= urlencode($shareUrl) ?>&text=<?= urlencode($shareText) ?>" target="_blank" rel="noopener" aria-label="Share on Telegram">TG</a>
+            <button type="button" class="share-btn share-btn-copy" id="copyLinkBtn" data-url="<?= htmlspecialchars($shareUrl) ?>" aria-label="Copy link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 12a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M15 12a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <p class="pd-share-hint">TikTok doesn't allow direct web links &mdash; tap <strong>Share</strong> on your phone to send straight to the TikTok app, or use <strong>Copy link</strong> to paste it into a TikTok post yourself.</p>
         </div>
       </div>
     </div>

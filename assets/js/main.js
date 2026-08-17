@@ -468,4 +468,41 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
   }
+
+  // Product share row: native OS share sheet (covers TikTok/Instagram/etc.
+  // on mobile) with a copy-link fallback for desktop.
+  var nativeShareBtn = document.getElementById('nativeShareBtn');
+  if (nativeShareBtn) {
+    if (!navigator.share) {
+      nativeShareBtn.style.display = 'none';
+    } else {
+      nativeShareBtn.addEventListener('click', function () {
+        navigator.share({
+          title: nativeShareBtn.getAttribute('data-title'),
+          url: nativeShareBtn.getAttribute('data-url')
+        }).catch(function () { /* user cancelled the share sheet — no-op */ });
+      });
+    }
+  }
+
+  var copyLinkBtn = document.getElementById('copyLinkBtn');
+  if (copyLinkBtn) {
+    copyLinkBtn.addEventListener('click', function () {
+      var url = copyLinkBtn.getAttribute('data-url');
+      var onCopied = function () {
+        var original = copyLinkBtn.innerHTML;
+        copyLinkBtn.classList.add('share-btn-copied');
+        copyLinkBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 12.5l6 6 12-12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        setTimeout(function () {
+          copyLinkBtn.innerHTML = original;
+          copyLinkBtn.classList.remove('share-btn-copied');
+        }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(onCopied).catch(function () { window.prompt('Copy this link:', url); });
+      } else {
+        window.prompt('Copy this link:', url);
+      }
+    });
+  }
 });

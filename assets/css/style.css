@@ -620,6 +620,21 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
 .qty-stepper input { width: 40px; text-align: center; border: none; background: none; font-weight: 600; -moz-appearance: textfield; }
 .pd-meta { display: flex; flex-direction: column; gap: 10px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 0.88rem; color: var(--muted); }
 
+.pd-share { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line); }
+.pd-share-label { display: block; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 10px; }
+.pd-share-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.share-btn {
+  width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--line);
+  background: var(--surface); display: flex; align-items: center; justify-content: center;
+  color: var(--ink-soft); flex-shrink: 0; transition: all 0.15s ease; cursor: pointer;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.02em; text-decoration: none;
+}
+.share-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+.share-btn-brand:hover { border-color: var(--brand); color: var(--brand); }
+.share-btn-native { border-color: var(--accent); color: var(--accent); }
+.share-btn-copied { border-color: var(--success); color: var(--success); }
+.pd-share-hint { margin-top: 12px; font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
 /* ---------------- Cart page ---------------- */
 
 .cart-layout { display: grid; grid-template-columns: 1fr 360px; gap: 40px; align-items: flex-start; }

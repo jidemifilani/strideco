@@ -18,7 +18,7 @@ require_once __DIR__ . '/includes/header.php';
       <p>We want you to be happy with your purchase. If something isn't right, here's how returns, exchanges, and refunds work at <?= htmlspecialchars($siteName) ?>.</p>
 
       <h3>1. Return window</h3>
-      <p>You can request a return or exchange within <strong>7 days</strong> of receiving your order, as long as the item is unworn, unwashed, and in its original packaging with tags attached.</p>
+      <p>You can request a return within <strong>5 days</strong>, or an exchange within <strong>7 days</strong>, of receiving your order, as long as the item is unworn, unwashed, and in its original packaging with tags attached.</p>
 
       <h3>2. How to start a return</h3>
       <p>Contact us at <a href="mailto:<?= htmlspecialchars($contactEmail) ?>" style="color:var(--accent-dark);"><?= htmlspecialchars($contactEmail) ?></a> or via our <a href="<?= base_url('contact.php') ?>" style="color:var(--accent-dark);">contact form</a> with your order reference (find it on your <a href="<?= base_url('track-order.php') ?>" style="color:var(--accent-dark);">order tracking page</a>) and the reason for the return. We'll confirm eligibility and next steps within 2 business days.</p>
